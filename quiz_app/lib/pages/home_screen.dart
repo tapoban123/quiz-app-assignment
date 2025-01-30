@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_app/models/user_selection_model.dart';
+import 'package:quiz_app/providers/quiz_provider.dart';
 import 'package:quiz_app/theme/custom_colors.dart';
 import 'package:quiz_app/utils/app_images.dart';
 import 'package:quiz_app/utils/utils.dart';
@@ -18,6 +21,17 @@ class _HomeScreenState extends State<HomeScreen> {
     "All are correct",
   ];
   ValueNotifier<String> selectedOption = ValueNotifier("");
+
+  String getCurrentQsNumber() {
+    final int currentQuestionNum =
+        Provider.of<QuizProvider>(context).currentQsNumber;
+
+    if ((currentQuestionNum - (currentQuestionNum % 10)) == 0) {
+      return "0$currentQuestionNum";
+    } else {
+      return currentQuestionNum.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("01/10"),
+            Text("${getCurrentQsNumber()}/10"),
             const SizedBox(
               height: 10,
             ),
@@ -59,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(30),
               child: SizedBox(
-                width: screenWidth(context) * 0.8,
+                width: double.infinity,
                 height: screenWidth(context) * 0.55,
                 child: Image.asset(
                   AppImages.geneticsImage,
@@ -113,7 +128,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 PreviousAndNextButton(
                   buttonText: "Next",
-                  onTap: () {},
+                  onTap: () {
+                    Provider.of<QuizProvider>(
+                      context,
+                      listen: false,
+                    ).acceptUserChoice(
+                      UserSelectionModel(
+                        questionNumber: 1,
+                        questionThumbnail: "questionThumbnail",
+                        question: "question",
+                        chosenOption: "chosenOption",
+                        isCorrect: false,
+                      ),
+                    );
+                  },
                 ),
               ],
             )
