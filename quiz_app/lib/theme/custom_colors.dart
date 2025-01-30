@@ -4,6 +4,7 @@ class CustomColors {
   CustomColors._();
 
   static const Color deepBlue1 = Color(0xff1F1147);
+  static const Color deepBlue4 = Color(0xff2a175b);
   static const Color deepBlue2 = Color(0xff361E70);
   static const Color deepBlue3 = Color(0xff32167C);
   static const Color blue1 = Color(0xff6949FD);

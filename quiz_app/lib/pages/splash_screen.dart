@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/pages/home_screen.dart';
 import 'package:quiz_app/theme/custom_colors.dart';
 import 'package:quiz_app/utils/app_images.dart';
 import 'package:quiz_app/utils/utils.dart';
@@ -23,7 +24,7 @@ class SplashScreen extends StatelessWidget {
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
                 ),
-                color: CustomColors.deepBlue3,
+                color: CustomColors.deepBlue4,
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -68,62 +69,90 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(
               height: 24,
             ),
-            Text(
-              "Let's Play!",
-              style: TextStyle(
-                fontSize: 28,
-                fontFamily: CustomFontFamily.rubikMedium.fontFamily,
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              "Get smarter everyday",
-              style: TextStyle(
-                fontSize: 16,
-                fontFamily: CustomFontFamily.rubikRegular.fontFamily,
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColors.blue3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                minimumSize: const Size(double.infinity, 60),
-              ),
-              child: const Text(
-                "Play Now",
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  side: const BorderSide(color: CustomColors.blue1, width: 1.5),
-                ),
-                minimumSize: const Size(double.infinity, 60),
-              ),
-              child: const Text(
-                "About",
-                style: TextStyle(
-                  color: CustomColors.blue1,
-                  fontSize: 24,
-                ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 34.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Let's Play!",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontFamily: CustomFontFamily.rubikMedium.fontFamily,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    "Get smarter everyday",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: CustomFontFamily.rubikRegular.fontFamily,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 50,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const HomeScreen(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          final offset = Tween(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).animate(CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.fastEaseInToSlowEaseOut,
+                          ));
+
+                          return SlideTransition(
+                            position: offset,
+                            child: child,
+                          );
+                        },
+                      ));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: CustomColors.blue3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      minimumSize: const Size(double.infinity, 60),
+                    ),
+                    child: const Text(
+                      "Play Now",
+                      style: TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: const BorderSide(
+                            color: CustomColors.blue1, width: 1.5),
+                      ),
+                      minimumSize: const Size(double.infinity, 60),
+                    ),
+                    child: const Text(
+                      "About",
+                      style: TextStyle(
+                        color: CustomColors.blue1,
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

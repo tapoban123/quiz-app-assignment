@@ -14,9 +14,9 @@ enum CustomFontFamily {
 }
 
 double screenWidth(BuildContext context) {
-  return MediaQuery.of(context).size.width;
+  return MediaQuery.sizeOf(context).width;
 }
 
 double screenHeight(BuildContext context) {
-  return MediaQuery.of(context).size.height;
+  return MediaQuery.sizeOf(context).height;
 }

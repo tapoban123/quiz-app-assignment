@@ -26,12 +26,12 @@ class MyApp extends StatelessWidget {
       title: 'Quiz App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(useMaterial3: true).copyWith(
-        scaffoldBackgroundColor: CustomColors.deepBlue1,
-        textTheme: Theme.of(context).textTheme.apply(
-              fontFamily: CustomFontFamily.rubikRegular.fontFamily,
-              bodyColor: Colors.white,
-            ),
-      ),
+          scaffoldBackgroundColor: CustomColors.deepBlue1,
+          textTheme: Theme.of(context).textTheme.apply(
+                fontFamily: CustomFontFamily.rubikRegular.fontFamily,
+                bodyColor: Colors.white,
+              ),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent)),
       home: const SplashScreen(),
     );
   }
