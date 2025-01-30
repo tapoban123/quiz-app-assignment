@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum CustomFontFamily {
   rubikSemiBold("Rubik-SemiBold"),
   rubikBold("Rubik-Bold"),
@@ -9,4 +11,12 @@ enum CustomFontFamily {
 
   final String fontFamily;
   const CustomFontFamily(this.fontFamily);
+}
+
+double screenWidth(BuildContext context) {
+  return MediaQuery.of(context).size.width;
+}
+
+double screenHeight(BuildContext context) {
+  return MediaQuery.of(context).size.height;
 }
