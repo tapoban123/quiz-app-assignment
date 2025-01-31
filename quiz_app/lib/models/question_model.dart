@@ -3,29 +3,31 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:quiz_app/models/option_model.dart';
+
 class QuestionModel {
-  final int questionNumber;
+  final int? questionNumber;
   final String description;
-  final String detailedSolution;
-  final List<Map<String, dynamic>> options;
+  final String detailed_solution;
+  final List<OptionModel> options;
 
   QuestionModel({
-    required this.questionNumber,
+    this.questionNumber,
     required this.description,
-    required this.detailedSolution,
+    required this.detailed_solution,
     required this.options,
   });
 
   QuestionModel copyWith({
     int? questionNumber,
     String? description,
-    String? detailedSolution,
-    List<Map<String, dynamic>>? options,
+    String? detailed_solution,
+    List<OptionModel>? options,
   }) {
     return QuestionModel(
       questionNumber: questionNumber ?? this.questionNumber,
       description: description ?? this.description,
-      detailedSolution: detailedSolution ?? this.detailedSolution,
+      detailed_solution: detailed_solution ?? this.detailed_solution,
       options: options ?? this.options,
     );
   }
@@ -34,22 +36,17 @@ class QuestionModel {
     return <String, dynamic>{
       'questionNumber': questionNumber,
       'description': description,
-      'detailedSolution': detailedSolution,
-      'options': options,
+      'detailed_solution': detailed_solution,
+      'options': options.map((x) => x.toMap()).toList(),
     };
   }
 
   factory QuestionModel.fromMap(Map<String, dynamic> map) {
     return QuestionModel(
-      questionNumber: map['questionNumber'] as int,
+      questionNumber: map['questionNumber'] != null ? map['questionNumber'] as int : null,
       description: map['description'] as String,
-      detailedSolution: map['detailedSolution'] as String,
-      options: List<Map<String, dynamic>>.from(
-        (map['options'] as List<Map<String, dynamic>>)
-            .map<Map<String, dynamic>>(
-          (x) => x,
-        ),
-      ),
+      detailed_solution: map['detailed_solution'] as String,
+      options: List<OptionModel>.from((map['options'] as List<OptionModel>).map<OptionModel>((x) => OptionModel.fromMap(x as Map<String,dynamic>),),),
     );
   }
 
@@ -60,24 +57,25 @@ class QuestionModel {
 
   @override
   String toString() {
-    return 'QuestionModel(questionNumber: $questionNumber, description: $description, detailedSolution: $detailedSolution, options: $options)';
+    return 'QuestionModel(questionNumber: $questionNumber, description: $description, detailed_solution: $detailed_solution, options: $options)';
   }
 
   @override
   bool operator ==(covariant QuestionModel other) {
     if (identical(this, other)) return true;
-
-    return other.questionNumber == questionNumber &&
-        other.description == description &&
-        other.detailedSolution == detailedSolution &&
-        listEquals(other.options, options);
+  
+    return 
+      other.questionNumber == questionNumber &&
+      other.description == description &&
+      other.detailed_solution == detailed_solution &&
+      listEquals(other.options, options);
   }
 
   @override
   int get hashCode {
     return questionNumber.hashCode ^
-        description.hashCode ^
-        detailedSolution.hashCode ^
-        options.hashCode;
+      description.hashCode ^
+      detailed_solution.hashCode ^
+      options.hashCode;
   }
 }
