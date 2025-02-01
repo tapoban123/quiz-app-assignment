@@ -11,8 +11,6 @@ class OptionModel {
     required this.is_correct,
   });
 
-  
-
   OptionModel copyWith({
     int? optionNumber,
     String? description,
@@ -35,7 +33,8 @@ class OptionModel {
 
   factory OptionModel.fromMap(Map<String, dynamic> map) {
     return OptionModel(
-      optionNumber: map['optionNumber'] != null ? map['optionNumber'] as int : null,
+      optionNumber:
+          map['optionNumber'] != null ? map['optionNumber'] as int : null,
       description: map['description'] as String,
       is_correct: map['is_correct'] as bool,
     );
@@ -43,21 +42,23 @@ class OptionModel {
 
   String toJson() => json.encode(toMap());
 
-  factory OptionModel.fromJson(String source) => OptionModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory OptionModel.fromJson(String source) =>
+      OptionModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'OptionModel(optionNumber: $optionNumber, description: $description, is_correct: $is_correct)';
+  String toString() =>
+      'OptionModel(optionNumber: $optionNumber, description: $description, is_correct: $is_correct)';
 
   @override
   bool operator ==(covariant OptionModel other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.optionNumber == optionNumber &&
-      other.description == description &&
-      other.is_correct == is_correct;
+
+    return other.optionNumber == optionNumber &&
+        other.description == description &&
+        other.is_correct == is_correct;
   }
 
   @override
-  int get hashCode => optionNumber.hashCode ^ description.hashCode ^ is_correct.hashCode;
+  int get hashCode =>
+      optionNumber.hashCode ^ description.hashCode ^ is_correct.hashCode;
 }

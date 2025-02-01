@@ -32,9 +32,12 @@ class QuizProvider extends ChangeNotifier {
   }
 
   bool hasUnansweredQuestion() {
-    return _userAnswers.any(
-      (element) => element.chosenOption == null,
-    );
+    for (final answer in _userAnswers) {
+      if (answer.chosenOption == null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   void resetProvider() {

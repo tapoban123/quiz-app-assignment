@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_app/pages/home_screen.dart';
-import 'package:quiz_app/pages/results_page.dart';
 import 'package:quiz_app/pages/splash_screen.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'package:quiz_app/theme/custom_colors.dart';

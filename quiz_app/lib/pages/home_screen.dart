@@ -279,6 +279,9 @@ class _QuestionContentState extends State<QuestionContent> {
         Provider.of<QuizProvider>(context, listen: false).questions.length;
     final currentQuestionNumber =
         Provider.of<QuizProvider>(context).currentQsNumber;
+    final hasUnansweredQuestions = Provider.of<QuizProvider>(
+      context,
+    ).hasUnansweredQuestion();
 
     if (Provider.of<QuizProvider>(context, listen: false).userAnswers.any(
           (element) => element.question == widget.questionData.description,
@@ -404,9 +407,13 @@ class _QuestionContentState extends State<QuestionContent> {
                         isCorrect: false,
                       );
 
+                  Provider.of<QuizProvider>(
+                    context,
+                    listen: false,
+                  ).acceptUserChoice(selectedOption.value!);
+
                   if (currentQuestionNumber == maxQuestions) {
-                    if (Provider.of<QuizProvider>(context, listen: false)
-                        .hasUnansweredQuestion()) {
+                    if (hasUnansweredQuestions) {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -448,11 +455,6 @@ class _QuestionContentState extends State<QuestionContent> {
                       curve: Curves.fastOutSlowIn,
                     );
                   }
-
-                  Provider.of<QuizProvider>(
-                    context,
-                    listen: false,
-                  ).acceptUserChoice(selectedOption.value!);
                 },
               ),
             ],
