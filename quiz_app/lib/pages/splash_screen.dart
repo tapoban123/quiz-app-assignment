@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:quiz_app/api/api_service.dart';
 import 'package:quiz_app/pages/home_screen.dart';
 import 'package:quiz_app/theme/custom_colors.dart';
 import 'package:quiz_app/utils/app_images.dart';
@@ -10,7 +9,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ApiService().fetchQuestions();
     return Scaffold(
       body: SizedBox(
         width: double.infinity,

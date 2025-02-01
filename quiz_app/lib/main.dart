@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:quiz_app/pages/home_screen.dart';
+import 'package:quiz_app/pages/results_page.dart';
 import 'package:quiz_app/pages/splash_screen.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'package:quiz_app/theme/custom_colors.dart';
@@ -30,13 +31,20 @@ class MyApp extends StatelessWidget {
         title: 'Quiz App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(useMaterial3: true).copyWith(
-            scaffoldBackgroundColor: CustomColors.deepBlue1,
-            textTheme: Theme.of(context).textTheme.apply(
-                  fontFamily: CustomFontFamily.rubikRegular.fontFamily,
-                  bodyColor: Colors.white,
-                ),
-            appBarTheme:
-                const AppBarTheme(backgroundColor: Colors.transparent)),
+          scaffoldBackgroundColor: CustomColors.deepBlue1,
+          textTheme: Theme.of(context).textTheme.apply(
+                fontFamily: CustomFontFamily.rubikRegular.fontFamily,
+                bodyColor: Colors.white,
+              ),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.transparent,
+            titleTextStyle: TextStyle(
+              fontFamily: CustomFontFamily.rubikMedium.fontFamily,
+              fontSize: 24,
+              color: CustomColors.green,
+            ),
+          ),
+        ),
         home: const SplashScreen(),
       ),
     );

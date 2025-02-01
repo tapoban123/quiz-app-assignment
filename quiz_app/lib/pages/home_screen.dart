@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:quiz_app/models/question_model.dart';
 import 'package:quiz_app/models/user_selection_model.dart';
 import 'package:quiz_app/pages/results_page.dart';
+import 'package:quiz_app/pages/splash_screen.dart';
 import 'package:quiz_app/providers/quiz_provider.dart';
 import 'package:quiz_app/theme/custom_colors.dart';
 import 'package:quiz_app/utils/app_images.dart';
@@ -31,7 +32,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final noneAnswered =
+        Provider.of<QuizProvider>(context).userAnswers.isNotEmpty &&
+            Provider.of<QuizProvider>(context).userAnswers.any(
+                  (element) => element.chosenOption != null,
+                );
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -41,7 +53,86 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              if (noneAnswered) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title:
+                        const Text("Are you sure you want to exit the exam?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Provider.of<QuizProvider>(context, listen: false)
+                              .resetProvider();
+
+                          Navigator.of(context)
+                              .pushReplacement(PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    const SplashScreen(),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              final position = Tween(
+                                begin: const Offset(-1, 0),
+                                end: Offset.zero,
+                              ).animate(CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.fastLinearToSlowEaseIn,
+                              ));
+
+                              return SlideTransition(
+                                position: position,
+                                child: child,
+                              );
+                            },
+                          ));
+                        },
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontFamily: CustomFontFamily.rubikBold.fontFamily,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          "No",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontFamily: CustomFontFamily.rubikBold.fontFamily,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                Provider.of<QuizProvider>(context, listen: false)
+                    .resetProvider();
+                Navigator.of(context).pushReplacement(PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const SplashScreen(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    final position = Tween(
+                      begin: const Offset(-1, 0),
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.fastLinearToSlowEaseIn,
+                    ));
+
+                    return SlideTransition(
+                      position: position,
+                      child: child,
+                    );
+                  },
+                ));
+              }
             },
             style: IconButton.styleFrom(
               backgroundColor: Colors.white.withOpacity(0.08),
@@ -53,25 +144,71 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Consumer<QuizProvider>(
-        builder: (context, quizProvider, child) {
-          final questions = quizProvider.questions;
-          if (questions.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return PageView.builder(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(),
-            allowImplicitScrolling: false,
-            itemCount: questions.length,
-            itemBuilder: (context, index) => QuestionContent(
-              currentPageNumber: index,
-              pageController: _pageController,
-              questionData: questions[index],
+      body: Column(children: [
+        Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 10.0).copyWith(top: 5),
+          child: SizedBox(
+            height: 30,
+            width: double.infinity,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: Provider.of<QuizProvider>(context, listen: false)
+                  .questions
+                  .length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(right: 5.0),
+                child: GestureDetector(
+                  onTap: () {
+                    Provider.of<QuizProvider>(
+                      context,
+                      listen: false,
+                    ).setQsNumber(index + 1);
+
+                    _pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.fastOutSlowIn,
+                    );
+                  },
+                  child: CircleAvatar(
+                    backgroundColor:
+                        Provider.of<QuizProvider>(context).userAnswers.any(
+                                  (element) =>
+                                      element.questionNumber == index + 1 &&
+                                      element.chosenOption != null,
+                                )
+                            ? Colors.green
+                            : Colors.grey,
+                    child: Text((index + 1).toString()),
+                  ),
+                ),
+              ),
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        Expanded(
+          child: Consumer<QuizProvider>(
+            builder: (context, quizProvider, child) {
+              final questions = quizProvider.questions;
+              if (questions.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return PageView.builder(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                allowImplicitScrolling: false,
+                itemCount: questions.length,
+                itemBuilder: (context, index) => QuestionContent(
+                  currentPageNumber: index,
+                  pageController: _pageController,
+                  questionData: questions[index],
+                ),
+              );
+            },
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -158,16 +295,15 @@ class _QuestionContentState extends State<QuestionContent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("${getCurrentQsNumber()}/$maxQuestions"),
           const SizedBox(
-            height: 10,
+            height: 12,
           ),
           Text(
             widget.questionData.description,
-            style: const TextStyle(fontSize: 17),
+            style: const TextStyle(fontSize: 16),
           ),
           const SizedBox(
-            height: 26,
+            height: 18,
           ),
           ClipRRect(
             borderRadius: BorderRadius.circular(30),
@@ -181,10 +317,10 @@ class _QuestionContentState extends State<QuestionContent> {
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 14,
           ),
           SizedBox(
-            height: 240,
+            height: 230,
             child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.questionData.options.length,
@@ -209,7 +345,11 @@ class _QuestionContentState extends State<QuestionContent> {
                           selectedOption.value = userSelectedOption;
                         },
                         leading: CircleAvatar(
-                          child: Text("0${index + 1}"),
+                          radius: 18,
+                          child: Text(
+                            "0${index + 1}",
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14)),
@@ -220,7 +360,7 @@ class _QuestionContentState extends State<QuestionContent> {
                         title: Text(
                           option.description,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             color: option.description ==
                                     selectedOptionValue?.chosenOption
                                 ? Colors.black
@@ -255,43 +395,56 @@ class _QuestionContentState extends State<QuestionContent> {
               PreviousAndNextButton(
                 buttonText: "Next",
                 onTap: () {
-                  // debugPrint(
-                  //     "Current Page Number: ${widget.currentPageNumber}");
-                  // debugPrint("Current Question Number: $currentQuestionNumber");
-                  // debugPrint("Total Questions: $maxQuestions");
-
                   selectedOption.value = selectedOption.value ??
                       UserSelectionModel(
                         questionNumber: widget.questionData.questionNumber!,
                         questionThumbnail: "",
                         question: widget.questionData.description,
-                        chosenOption: "",
+                        chosenOption: null,
                         isCorrect: false,
                       );
 
                   if (currentQuestionNumber == maxQuestions) {
-                    Navigator.of(context).push(PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          const ResultsPage(),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        final position =
-                            Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                .animate(CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.fastLinearToSlowEaseIn,
-                        ));
+                    if (Provider.of<QuizProvider>(context, listen: false)
+                        .hasUnansweredQuestion()) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text("Please answer all the questions."),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Sure"),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).push(PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            const ResultsPage(),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          final position =
+                              Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                  .animate(CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.fastLinearToSlowEaseIn,
+                          ));
 
-                        return SlideTransition(
-                          position: position,
-                          child: child,
-                        );
-                      },
-                    ));
+                          return SlideTransition(
+                            position: position,
+                            child: child,
+                          );
+                        },
+                      ));
+                    }
                   } else {
                     widget.pageController.animateToPage(
                       widget.currentPageNumber + 1,
-                      duration: const Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 300),
                       curve: Curves.fastOutSlowIn,
                     );
                   }

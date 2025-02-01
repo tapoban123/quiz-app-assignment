@@ -31,12 +31,32 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool hasUnansweredQuestion() {
+    return _userAnswers.any(
+      (element) => element.chosenOption == null,
+    );
+  }
+
+  void resetProvider() {
+    _currentQuestionNumber = 1;
+    _userAnswers.clear();
+    _totalScore = 0;
+    notifyListeners();
+  }
+
   void nextQuestion() {
     _currentQuestionNumber += 1;
+    notifyListeners();
+  }
+
+  void setQsNumber(qsNum) {
+    _currentQuestionNumber = qsNum;
+    notifyListeners();
   }
 
   void previousQuestion() {
     _currentQuestionNumber -= 1;
+    notifyListeners();
   }
 
   void createQuestionsList(QuestionModel question) {
