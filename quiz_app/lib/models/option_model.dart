@@ -2,11 +2,11 @@
 import 'dart:convert';
 
 class OptionModel {
-  final int optionNumber;
+  final int? optionNumber;
   final String description;
   final bool is_correct;
   OptionModel({
-    required this.optionNumber,
+    this.optionNumber,
     required this.description,
     required this.is_correct,
   });
@@ -35,7 +35,7 @@ class OptionModel {
 
   factory OptionModel.fromMap(Map<String, dynamic> map) {
     return OptionModel(
-      optionNumber: map['optionNumber'] as int,
+      optionNumber: map['optionNumber'] != null ? map['optionNumber'] as int : null,
       description: map['description'] as String,
       is_correct: map['is_correct'] as bool,
     );
