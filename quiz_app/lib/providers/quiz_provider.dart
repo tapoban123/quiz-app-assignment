@@ -18,7 +18,16 @@ class QuizProvider extends ChangeNotifier {
     if (userAnswer.questionNumber < questions.length) {
       nextQuestion();
     }
-    _userAnswers.add(userAnswer);
+
+    if (_userAnswers.any(
+      (element) => element.question == userAnswer.question,
+    )) {
+      _userAnswers[_userAnswers.indexWhere(
+        (element) => element.question == userAnswer.question,
+      )] = userAnswer;
+    } else {
+      _userAnswers.add(userAnswer);
+    }
     notifyListeners();
   }
 

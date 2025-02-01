@@ -143,6 +143,16 @@ class _QuestionContentState extends State<QuestionContent> {
     final currentQuestionNumber =
         Provider.of<QuizProvider>(context).currentQsNumber;
 
+    if (Provider.of<QuizProvider>(context, listen: false).userAnswers.any(
+          (element) => element.question == widget.questionData.description,
+        )) {
+      selectedOption.value = Provider.of<QuizProvider>(context, listen: false)
+          .userAnswers
+          .firstWhere(
+            (element) => element.question == widget.questionData.description,
+          );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
@@ -250,39 +260,46 @@ class _QuestionContentState extends State<QuestionContent> {
                   // debugPrint("Current Question Number: $currentQuestionNumber");
                   // debugPrint("Total Questions: $maxQuestions");
 
-                  if (selectedOption.value != null) {
-                    if (currentQuestionNumber == maxQuestions) {
-                      Navigator.of(context).push(PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ResultsPage(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          final position =
-                              Tween(begin: const Offset(1, 0), end: Offset.zero)
-                                  .animate(CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.fastLinearToSlowEaseIn,
-                          ));
-
-                          return SlideTransition(
-                            position: position,
-                            child: child,
-                          );
-                        },
-                      ));
-                    } else {
-                      widget.pageController.animateToPage(
-                        widget.currentPageNumber + 1,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.fastOutSlowIn,
+                  selectedOption.value = selectedOption.value ??
+                      UserSelectionModel(
+                        questionNumber: widget.questionData.questionNumber!,
+                        questionThumbnail: "",
+                        question: widget.questionData.description,
+                        chosenOption: "",
+                        isCorrect: false,
                       );
-                    }
 
-                    Provider.of<QuizProvider>(
-                      context,
-                      listen: false,
-                    ).acceptUserChoice(selectedOption.value!);
+                  if (currentQuestionNumber == maxQuestions) {
+                    Navigator.of(context).push(PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const ResultsPage(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        final position =
+                            Tween(begin: const Offset(1, 0), end: Offset.zero)
+                                .animate(CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.fastLinearToSlowEaseIn,
+                        ));
+
+                        return SlideTransition(
+                          position: position,
+                          child: child,
+                        );
+                      },
+                    ));
+                  } else {
+                    widget.pageController.animateToPage(
+                      widget.currentPageNumber + 1,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.fastOutSlowIn,
+                    );
                   }
+
+                  Provider.of<QuizProvider>(
+                    context,
+                    listen: false,
+                  ).acceptUserChoice(selectedOption.value!);
                 },
               ),
             ],
